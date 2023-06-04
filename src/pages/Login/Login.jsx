@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { AuthContext } from '../../providers/AuthProvider';
 import toast from 'react-hot-toast';
@@ -11,6 +11,8 @@ const Login = () => {
     const { loading, setLoading, signIn, signInWithGoogle, resetPassword } = useContext(AuthContext);
     const navigate = useNavigate();
     const emailRef = useRef();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
 
 
     // Handle Sign In
@@ -23,7 +25,7 @@ const Login = () => {
         signIn(email, password)
             .then(result => {
                 console.log(result.user)
-                navigate('/')
+                navigate(from, {replace: true})
             }).catch(err => {
                 setLoading(false)
                 console.log(err.message);
@@ -38,7 +40,7 @@ const Login = () => {
         signInWithGoogle()
             .then(result => {
                 console.log(result.user)
-                navigate('/')
+                navigate(from, {replace: true})
             }).catch(err => {
                 setLoading(false)
                 console.log(err.message);
@@ -49,6 +51,17 @@ const Login = () => {
 
     // Handle Reset Pass
     const handleRest = () => {
+        const email = emailRef.current.value;
+        resetPassword(email)
+            .then(() => {
+                setLoading(false)
+                toast.success('Please check your email for rest Link')
+            }).catch(err => {
+                setLoading(false)
+                console.log(err.message);
+                toast.error(err.message)
+
+            })
 
     }
 
@@ -110,7 +123,7 @@ const Login = () => {
                     </div>
                 </form>
                 <div className='space-y-1'>
-                    <button className='text-xs hover:underline hover:text-rose-500 text-gray-400'>
+                    <button onClick={handleRest} className='text-xs hover:underline hover:text-rose-500 text-gray-400'>
                         Forgot password?
                     </button>
                 </div>
