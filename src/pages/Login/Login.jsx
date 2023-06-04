@@ -12,7 +12,7 @@ const Login = () => {
     const navigate = useNavigate();
     const emailRef = useRef();
     const location = useLocation();
-    const from = location.state?.from?.pathname || '/';
+    const from = location.state?.from?.pathname || '/'
 
 
     // Handle Sign In
@@ -24,8 +24,8 @@ const Login = () => {
 
         signIn(email, password)
             .then(result => {
-                console.log(result.user)
-                navigate(from, {replace: true})
+                // navigate(from, {replace: true})
+                navigate('/')
             }).catch(err => {
                 setLoading(false)
                 console.log(err.message);
@@ -39,8 +39,8 @@ const Login = () => {
     const handleGoogleSignIn = () => {
         signInWithGoogle()
             .then(result => {
-                console.log(result.user)
-                navigate(from, {replace: true})
+                // navigate(from, {replace: true})
+                navigate('/')
             }).catch(err => {
                 setLoading(false)
                 console.log(err.message);

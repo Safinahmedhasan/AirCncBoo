@@ -29,6 +29,60 @@ const SignUp = () => {
     }
 
 
+    // handle user registration
+    const handleSubmit = event => {
+        event.preventDefault();
+        const from = event.target
+        const email = from.email.value;
+        const password = from.password.value;
+        const name = from.name.value;
+
+        // images Upload
+        const image = from.image.files[0];
+        const formData = new FormData();
+        formData.append('image', image)
+
+        const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMG_KEY}`
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(res => res.json())
+            .then(imageData => {
+                const imageUrl = imageData.data.display_url
+                createUser(email, password)
+                    .then(result => {
+                        updateUserProfile(name, imageUrl)
+                            .then(() => {
+                                toast.success('Sign Up Success')
+                                // navigate(from, { replace: true })
+                                navigate('/')
+                            }).catch(err => {
+                                setLoading(false)
+                                console.log(err.message);
+                                toast.error(err.message)
+
+                            })
+                        // navigate('/login')
+                    }).catch(err => {
+                        setLoading(false)
+                        console.log(err.message);
+                        toast.error(err.message)
+
+                    })
+
+            })
+            .catch(err => {
+                setLoading(false)
+                console.log(err.message);
+                toast.error(err.message)
+
+            })
+        return
+
+
+    }
 
     return (
         <div className='flex justify-center items-center min-h-screen'>
@@ -38,6 +92,7 @@ const SignUp = () => {
                     <p className='text-sm text-gray-400'>Welcome to AirCNC</p>
                 </div>
                 <form
+                    onSubmit={handleSubmit}
                     noValidate=''
                     action=''
                     className='space-y-6 ng-untouched ng-pristine ng-valid'
